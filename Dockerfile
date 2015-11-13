@@ -1,13 +1,11 @@
-# version 1.6.1-2
-# docker-version 1.11.1
-FROM ubuntu:15.04
-MAINTAINER Jim Myhrberg "contact@jimeh.me"
+FROM centos:latest
+MAINTAINER Jonathan Mainguy "jon@soh.re"
 
 ENV ZNC_VERSION 1.6.1
 
-RUN apt-get update \
-    && apt-get install -y sudo wget build-essential libssl-dev libperl-dev \
-               pkg-config swig3.0 libicu-dev ca-certificates \
+RUN yum update -y \
+    && yum install -y sudo wget make automake gcc gcc-c++ kernel-devel \
+    tar openssl-devel perl-devel pkgconfig swig libicu-devel \
     && mkdir -p /src \
     && cd /src \
     && wget "http://znc.in/releases/archive/znc-${ZNC_VERSION}.tar.gz" \
@@ -16,10 +14,8 @@ RUN apt-get update \
     && ./configure --disable-ipv6 \
     && make \
     && make install \
-    && apt-get remove -y wget \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /src* /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && yum clean all \
+    && rm -rf /src* /tmp/* /var/tmp/*
 
 RUN useradd znc
 ADD docker-entrypoint.sh /entrypoint.sh
